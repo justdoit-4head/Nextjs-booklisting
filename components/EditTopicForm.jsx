@@ -13,6 +13,12 @@ export default function EditTopicForm({ id, title, author, publishYear }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!newTitle || !newAuthor || !newpPublishYear) {
+      alert("Title, publishYear and author are required.");
+      return;
+    }
+
+
     try {
       const res = await fetch(`http://localhost:3000/api/books/${id}`, {
         method: "PUT",
