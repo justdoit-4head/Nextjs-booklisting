@@ -16,6 +16,7 @@ const BooksTable = ({ books, setBooks }) => {
     const [filteredBooks, setFilteredBooks] = useState([])
     const [totalPages, setTotalPages] = useState(1);
     const [popup, setpopup] = useState(false)
+    const [popup1, setpopup1] = useState(false)
 
     useEffect(() => {
 
@@ -53,11 +54,17 @@ const BooksTable = ({ books, setBooks }) => {
 
     const duplicateBook= async(book)=>{
 
-        try {
-           await axios.post("http://localhost:3000/api/books", {title: book.title, author: book.author, publishYear: book.publishYear})
+      const confirmed = confirm(`Do you wish to add a duplicate copy of ${book.title}?`);
 
-           const response= await axios.get("http://localhost:3000/api/books")  
-           setBooks(response.data.books)
+        try {
+          if (confirmed) {
+
+            await axios.post("http://localhost:3000/api/books", {title: book.title, author: book.author, publishYear: book.publishYear})
+ 
+            const response= await axios.get("http://localhost:3000/api/books")  
+            setBooks(response.data.books)
+            setpopup1(true)
+          }
 
         } catch (error) {
             console.log(error)
@@ -69,11 +76,12 @@ const BooksTable = ({ books, setBooks }) => {
       // Hide the popup after 5 seconds
       const timer = setTimeout(() => {
         setpopup(false);
+        setpopup1(false)
       }, 5000);
   
       // Clear the timer when the component unmounts or when popup changes
       return () => clearTimeout(timer);
-    }, [popup]);
+    }, [popup, popup1]);
 
 
   return (
@@ -87,6 +95,19 @@ const BooksTable = ({ books, setBooks }) => {
     <span class="sr-only">Info</span>
     <div>
       <span class="font-medium">Deleted successfully!</span> The list has been updated.
+    </div>
+  </div> : ""
+  }
+
+{
+    popup1? 
+    <div class="flex items-center p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400" role="alert">
+    <svg class="flex-shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+      <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
+    </svg>
+    <span class="sr-only">Info</span>
+    <div>
+      <span class="font-medium">Duplicate created!</span> The list has been updated.
     </div>
   </div> : ""
   }
