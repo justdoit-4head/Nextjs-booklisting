@@ -1,0 +1,153 @@
+"use client"
+import Link from "next/link";
+import { AiOutlineEdit } from 'react-icons/ai';
+import { BsInfoCircle } from 'react-icons/bs';
+import { MdOutlineAddBox, MdOutlineDelete } from 'react-icons/md';
+import { IoDuplicate } from "react-icons/io5";
+import axios from "axios";
+import { HiOutlineTrash } from "react-icons/hi";
+import { useEffect, useState } from "react";
+
+
+
+const BooksTable = ({ books, setBooks }) => {
+
+    const [currentPage, setCurrentPage] = useState(1)
+    const [filteredBooks, setFilteredBooks] = useState([])
+    const [totalPages, setTotalPages] = useState(1);
+
+    useEffect(() => {
+
+        const totalPagesCount = Math.ceil(books.length / 5); // taking account 5 books per page // can make this dynamic as well
+        setTotalPages(totalPagesCount);
+
+
+        const startIndex = (currentPage - 1) * 5;
+        const endIndex = startIndex + 5;
+        const booksForPage = books.slice(startIndex, endIndex);
+      
+        // filtered books
+        setFilteredBooks(booksForPage);
+      }, [currentPage, books]); 
+    
+
+    const deleteBook= async(id)=>{
+        try {
+            const response= await axios.delete(`http://localhost:3000/api/books?id=${id}`)
+            console.log(response)
+
+            setBooks(books.filter((book) => book._id !== id));
+            
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const duplicateBook= async(book)=>{
+
+        try {
+           await axios.post("http://localhost:3000/api/books", {title: book.title, author: book.author, publishYear: book.publishYear})
+
+           const response= await axios.get("http://localhost:3000/api/books")  
+           setBooks(response.data.books)
+
+        } catch (error) {
+            console.log(error)
+        }
+
+    }
+    
+
+
+  return (
+    <div className="w-full h-full border-separate border-spacing-2 flex flex-col items-center">
+
+        {/* table 2 */}
+<div class=" w-full h-full relative overflow-x-auto flex flex-col items-center">
+    <table class="w-full h-2/3 text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+        <thead class="text-sm text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <tr>
+                <th scope="col" class="px-6 py-3 max-sm:hidden sm:px-3">
+                    No
+                </th>
+                <th scope="col" class="px-6 py-3 sm:px-3">
+                    Title
+                </th>
+                <th scope="col" class="px-6 py-3 max-md:hidden sm:px-3">
+                    Author
+                </th>
+                <th scope="col" class="px-6 py-3 sm:px-3">
+                    Publish Year
+                </th>
+                <th scope="col" class="px-6 py-3 text-center sm:px-3">
+                    Operations
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {filteredBooks.map((book, index) => (
+
+          <tr key={book._id} className='bg-white border-b dark:bg-gray-800 dark:border-gray-700'>
+            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white max-sm:hidden">
+              {(currentPage - 1) * 5 + index + 1}
+            </th>
+            <td class="px-6 sm:px-3 py-4 tracking-widest text-gray-500 md:text-lg dark:text-gray-400">
+              {book.title}
+            </td>
+            <td class="px-6 sm:px-3 py-4 tracking-widest text-gray-500 md:text-lg dark:text-gray-400 max-md:hidden">
+              {book.author}
+            </td>
+            <td class="px-6 sm:px-3 py-4 tracking-widest text-gray-500 md:text-lg dark:text-gray-400">
+              {book.publishYear}
+            </td>
+            <td class="px-6 sm:px-3 py-4 h-fit">
+              <div className='flex justify-center items-center gap-x-4'>
+                <Link href={`/editBook/${book._id}`}> 
+                  <AiOutlineEdit className='text-2xl text-yellow-600' />
+                </Link>
+                <button onClick={()=> deleteBook(book._id)} className="text-red-400">
+                    <HiOutlineTrash size={24} />
+                </button>
+                <IoDuplicate className="text-blue-400 cursor-pointer" size={24} onClick={()=> duplicateBook(book)}/>
+              </div>
+            </td>
+          </tr>
+        ))}
+        </tbody>
+    </table>
+
+    <div className="pt-3">
+        {/* pagination */}
+                <div class="flex items-center gap-8">
+        <button {...(currentPage === 1 ? { disabled: true } : {}) }  onClick={()=> setCurrentPage(currentPage-1)}
+            class="relative h-8 max-h-[32px] w-8 max-w-[32px] select-none rounded-lg border border-gray-900 text-center align-middle font-sans text-xs font-medium uppercase text-gray-900 transition-all hover:opacity-75 focus:ring focus:ring-gray-300 active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+            type="button">
+            <span class="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                aria-hidden="true" class="w-4 h-4">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"></path>
+            </svg>
+            </span>
+        </button>
+        <p class="block font-sans text-base antialiased font-normal leading-relaxed text-gray-700">
+            Page <strong class="text-gray-900">{currentPage}</strong>  <strong class="text-gray-900">of </strong>
+            <strong class="text-gray-900">{totalPages}</strong>
+        </p>
+        <button
+            class="relative h-8 max-h-[32px] w-8 max-w-[32px] select-none rounded-lg border border-gray-900 text-center align-middle font-sans text-xs font-medium uppercase text-gray-900 transition-all hover:opacity-75 focus:ring focus:ring-gray-300 active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+            type="button" {...(currentPage === totalPages ? { disabled: true } : {})} onClick={()=> setCurrentPage(currentPage+1)}>
+            <span class="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                aria-hidden="true" class="w-4 h-4">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"></path>
+            </svg>
+            </span>
+        </button>
+        </div>
+    </div>
+    </div>
+  </div>
+  );
+};
+
+export default BooksTable;
