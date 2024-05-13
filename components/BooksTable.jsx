@@ -15,6 +15,7 @@ const BooksTable = ({ books, setBooks }) => {
     const [currentPage, setCurrentPage] = useState(1)
     const [filteredBooks, setFilteredBooks] = useState([])
     const [totalPages, setTotalPages] = useState(1);
+    const [popup, setpopup] = useState(false)
 
     useEffect(() => {
 
@@ -42,6 +43,7 @@ const BooksTable = ({ books, setBooks }) => {
             console.log(response)
 
             setBooks(books.filter((book) => book._id !== id));
+            setpopup(true)
         }
             
         } catch (error) {
@@ -63,11 +65,31 @@ const BooksTable = ({ books, setBooks }) => {
 
     }
     
+    useEffect(() => {
+      // Hide the popup after 5 seconds
+      const timer = setTimeout(() => {
+        setpopup(false);
+      }, 5000);
+  
+      // Clear the timer when the component unmounts or when popup changes
+      return () => clearTimeout(timer);
+    }, [popup]);
 
 
   return (
     <>
-
+  {
+    popup? 
+    <div class="flex items-center p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400" role="alert">
+    <svg class="flex-shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+      <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
+    </svg>
+    <span class="sr-only">Info</span>
+    <div>
+      <span class="font-medium">Deleted successfully!</span> The list has been updated.
+    </div>
+  </div> : ""
+  }
 
     <div className="w-full h-full border-separate border-spacing-2 flex flex-col items-center">
 
