@@ -32,11 +32,17 @@ const BooksTable = ({ books, setBooks }) => {
     
 
     const deleteBook= async(id)=>{
-        try {
+      const confirmed = confirm("Are you sure?");
+
+        try { 
+          
+          if (confirmed) {
+
             const response= await axios.delete(`http://localhost:3000/api/books?id=${id}`)
             console.log(response)
 
             setBooks(books.filter((book) => book._id !== id));
+        }
             
         } catch (error) {
             console.log(error)
@@ -60,6 +66,9 @@ const BooksTable = ({ books, setBooks }) => {
 
 
   return (
+    <>
+
+
     <div className="w-full h-full border-separate border-spacing-2 flex flex-col items-center">
 
         {/* table 2 */}
@@ -147,6 +156,8 @@ const BooksTable = ({ books, setBooks }) => {
     </div>
     </div>
   </div>
+
+  </>
   );
 };
 
