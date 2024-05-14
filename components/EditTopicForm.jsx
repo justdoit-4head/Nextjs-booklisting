@@ -20,7 +20,7 @@ export default function EditTopicForm({ id, title, author, publishYear }) {
 
 
     try {
-      const res = await fetch(`http://localhost:3000/api/books/${id}`, {
+      const res = await fetch(`https://nextjs-booklisting.vercel.app/api/books/${id}`, {
         method: "PUT",
         headers: {
           "Content-type": "application/json",

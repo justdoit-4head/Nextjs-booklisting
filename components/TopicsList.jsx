@@ -15,7 +15,7 @@ useEffect(() => {
 
     try {
       setLoading(true)
-      const response= await axios.get("http://localhost:3000/api/books")
+      const response= await axios.get("https://nextjs-booklisting.vercel.app/api/books")
       setLoading(false)
       setBooks(response.data.books)
     } catch (error) {

@@ -40,7 +40,7 @@ const BooksTable = ({ books, setBooks }) => {
           
           if (confirmed) {
 
-            const response= await axios.delete(`http://localhost:3000/api/books?id=${id}`)
+            const response= await axios.delete(`https://nextjs-booklisting.vercel.app/api/books?id=${id}`)
             console.log(response)
 
             setBooks(books.filter((book) => book._id !== id));
@@ -59,9 +59,9 @@ const BooksTable = ({ books, setBooks }) => {
         try {
           if (confirmed) {
 
-            await axios.post("http://localhost:3000/api/books", {title: book.title, author: book.author, publishYear: book.publishYear})
+            await axios.post("https://nextjs-booklisting.vercel.app/api/books", {title: book.title, author: book.author, publishYear: book.publishYear})
  
-            const response= await axios.get("http://localhost:3000/api/books")  
+            const response= await axios.get("https://nextjs-booklisting.vercel.app/api/books")  
             setBooks(response.data.books)
             setpopup1(true)
           }

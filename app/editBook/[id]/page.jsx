@@ -2,7 +2,7 @@ import EditTopicForm from "@/components/EditTopicForm";
 
 const getTopicById = async (id) => {
   try {
-    const res = await fetch(`http://localhost:3000/api/books/${id}`, {
+    const res = await fetch(`https://nextjs-booklisting.vercel.app/api/books/${id}`, {
       cache: "no-store",
     });
 

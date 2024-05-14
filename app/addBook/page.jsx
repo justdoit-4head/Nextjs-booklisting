@@ -19,7 +19,7 @@ export default function AddTopic() {
     }
 
     try {
-      const res = await fetch("http://localhost:3000/api/books", {
+      const res = await fetch("https://nextjs-booklisting.vercel.app/api/books", {
         method: "POST",
         headers: {
           "Content-type": "application/json",
